@@ -1,11 +1,75 @@
-import contactsService from "../services/contactsServices.js";
+import {
+    listContacts,
+    getContactById,
+    removeContact,
+    addContact,
+    updateOneContact,
+} from '../services/contactsServices.js'
 
-export const getAllContacts = (req, res) => {};
+import { catchAsync } from '../helpers/catchAsync.js'
+import HttpError from '../helpers/HttpError.js'
+import { createContactSchema, updateContactSchema } from '../schemas/contactsSchemas.js'
 
-export const getOneContact = (req, res) => {};
 
-export const deleteContact = (req, res) => {};
+export const getAllContacts = catchAsync(async (_, res) => {
+  const contacts = await listContacts()
+  res.status(200).json({ msg: 'Success!', contacts })
+})
 
-export const createContact = (req, res) => {};
+export const getOneContact = catchAsync(async (req, res) => {
+  const contact = await getContactById(req.params.id)
+  if (contact) {
+    return res.status(200).json({ contact })
+  } else {
+    throw new HttpError(404)
+  }
+})
 
-export const updateContact = (req, res) => {};
+export const deleteContact = catchAsync(async (req, res) => {
+  const contact = await removeContact(req.params.id)
+  if (contact) {
+    return res.status(200).json({ msg: 'Remote contact', contact })
+  } else {
+    throw new HttpError(404)
+  }
+})
+
+export const createContact = catchAsync(async (req, res) => {
+  const { name, email, phone } = req.body
+  const validationResult = await createContactSchema.validateAsync({
+    name,
+    email,
+    phone,
+  })
+
+  if (validationResult.error) {
+    throw new HttpError(400, validationResult.error.message)
+  }
+  const newContact = await addContact(name, email, phone)
+
+  res.status(201).json({ msg: 'newContact', newContact })
+})
+
+
+export const updateContact = catchAsync(async (req, res) => {
+    const { name, email, phone } = req.body;
+    const { id } = req.params;
+  
+    const validationResult = await updateContactSchema.validateAsync({ name, email, phone });
+    if (validationResult.error) {
+      throw new HttpError(400, validationResult.error.message);
+    }
+  
+    if (!name && !email && !phone) {
+      throw new HttpError(400, 'Body must have at least one field');
+    }
+  
+    const updatedContact = await updateOneContact(id, name, email, phone);
+  
+    if (updatedContact) {
+      res.status(200).json({ message: 'Updated contact', updatedContact });
+    } else {
+      throw new HttpError(404);
+    }
+  });
+  
