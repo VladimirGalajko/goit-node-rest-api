@@ -13,13 +13,13 @@ import { createContactSchema, updateContactSchema } from '../schemas/contactsSch
 
 export const getAllContacts = catchAsync(async (_, res) => {
   const contacts = await listContacts()
-  res.status(200).json({ msg: 'Success!', contacts })
+  res.status(200).json(contacts)
 })
 
 export const getOneContact = catchAsync(async (req, res) => {
   const contact = await getContactById(req.params.id)
   if (contact) {
-    return res.status(200).json({ contact })
+    return res.status(200).json(contact)
   } else {
     throw new HttpError(404)
   }
@@ -28,7 +28,7 @@ export const getOneContact = catchAsync(async (req, res) => {
 export const deleteContact = catchAsync(async (req, res) => {
   const contact = await removeContact(req.params.id)
   if (contact) {
-    return res.status(200).json({ msg: 'Remote contact', contact })
+    return res.status(200).json(contact)
   } else {
     throw new HttpError(404)
   }
@@ -47,7 +47,7 @@ export const createContact = catchAsync(async (req, res) => {
   }
   const newContact = await addContact(name, email, phone)
 
-  res.status(201).json({ msg: 'newContact', newContact })
+  res.status(201).json(newContact)
 })
 
 
@@ -67,7 +67,7 @@ export const updateContact = catchAsync(async (req, res) => {
     const updatedContact = await updateOneContact(id, name, email, phone);
   
     if (updatedContact) {
-      res.status(200).json({ message: 'Updated contact', updatedContact });
+      res.status(200).json(updatedContact);
     } else {
       throw new HttpError(404);
     }
