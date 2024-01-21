@@ -34,21 +34,25 @@ export const deleteContact = catchAsync(async (req, res) => {
   }
 })
 
-export const createContact = catchAsync(async (req, res) => {
-  const { name, email, phone } = req.body
-  const validationResult = await createContactSchema.validateAsync({
-    name,
-    email,
-    phone,
-  })
 
-  if (validationResult.error) {
-    throw new HttpError(400, validationResult.error.message)
-  }
-  const newContact = await addContact(name, email, phone)
+export const createContact = async (req, res) => {
+    try {
+      const { name, email, phone } = req.body; 
+   
+      await createContactSchema.validateAsync({ name, email, phone });  
 
-  res.status(201).json(newContact)
-})
+      const newContact = await addContact(name, email, phone);
+  
+      res.status(201).json(newContact);
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ message: error.message });
+      } else {     
+        res.status(error.status || 500).json({message: error.message});
+      }
+    }
+  };
+  
 
 
 export const updateContact = catchAsync(async (req, res) => {

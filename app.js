@@ -27,11 +27,9 @@ app.use((err, req, res, next) => {
 });
 
 
+app.post('/api/contacts', validateBody(createContactSchema), createContact);
+app.put('/api/contacts/:id', validateBody(updateContactSchema), updateContact);
 
 app.listen(3000, () => {
   console.log("Server is running. Use our API on port: 3000");
 });
-
-
-app.post('/api/contacts', validateBody(createContactSchema), createContact);
-app.put('/api/contacts/:id', validateBody(updateContactSchema), updateContact);
