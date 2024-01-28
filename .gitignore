@@ -3,5 +3,5 @@ node_modules/
 .idea
 .vscode
 .DS_Store
-/envs/production.env
-/envs/development.env
+envs/production.env
+envs/development.env
