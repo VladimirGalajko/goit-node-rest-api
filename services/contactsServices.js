@@ -45,11 +45,11 @@ async function updateOneContact(id, name, email, phone) {
   return result
 }
 
-async function updateStatus(id, favorite) {
+async function updateStatus(id, body) {
   const contact = await getContactById(id)
   if (!contact) return null
 
-  const result = await Contact.findByIdAndUpdate(id, {favorite}, {
+  const result = await Contact.findByIdAndUpdate(id, body, {
     new: true,
   });
 

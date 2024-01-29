@@ -4,20 +4,20 @@ import {
   removeContact,
   addContact,
   updateOneContact,
-  updateStatus
+  updateStatus,
 } from '../services/contactsServices.js'
-// import { Contact } from '../models/contactsModel.js'
+
 import { catchAsync } from '../helpers/catchAsync.js'
 import HttpError from '../helpers/HttpError.js'
 import {
   createContactSchema,
   updateContactSchema,
-  favoriteSchema
+  favoriteSchema,
 } from '../schemas/contactsSchemas.js'
 
 export const getAllContacts = catchAsync(async (_, res) => {
-   const contacts = await listContacts()
-   res.status(200).json(contacts)
+  const contacts = await listContacts()
+  res.status(200).json(contacts)
 })
 
 export const getOneContact = catchAsync(async (req, res) => {
@@ -57,7 +57,7 @@ export const createContact = async (req, res) => {
 }
 
 export const updateContact = catchAsync(async (req, res) => {
-  // const { name, email, phone } = req.body
+  const { name, email, phone } = req.body
   const { id } = req.params
 
   const validationResult = await updateContactSchema.validateAsync({
@@ -82,19 +82,16 @@ export const updateContact = catchAsync(async (req, res) => {
   }
 })
 
-
-
-
 export const updateFavorite = catchAsync(async (req, res) => {
   const { favorite } = req.body
   const { id } = req.params
 
-  const validationResult = await favoriteSchema.validateAsync({favorite})
+  const validationResult = await favoriteSchema.validateAsync({ favorite })
   if (validationResult.error) {
     throw new HttpError(400, validationResult.error.message)
   }
 
-  const updateRes = await updateStatus(id, favorite)
+  const updateRes = await updateStatus(id, req.body)
 
   if (updateRes) {
     res.status(200).json(updateRes)
