@@ -57,6 +57,7 @@ export const createContact = async (req, res) => {
 }
 
 export const updateContact = catchAsync(async (req, res) => {
+  
   const { name, email, phone } = req.body
   const { id } = req.params
 
@@ -83,6 +84,13 @@ export const updateContact = catchAsync(async (req, res) => {
 })
 
 export const updateFavorite = catchAsync(async (req, res) => {
+
+  const { error } = favoriteSchema.validate(req.body);
+  if (error) {
+    error.status = 400;
+    throw new HttpError(404);
+  }
+
   const { favorite } = req.body
   const { id } = req.params
 
