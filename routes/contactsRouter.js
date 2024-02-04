@@ -9,18 +9,21 @@ import {
 } from '../controllers/contactsControllers.js'
 
 import isValidId from '../middlewares/isValidId.js'
+import {protect} from '../middlewares/protectJws.js'
+
 
 const contactsRouter = express.Router()
 
-contactsRouter.get('/', getAllContacts)
+contactsRouter.get('/', protect, getAllContacts)
 
-contactsRouter.get('/:id', isValidId, getOneContact)
+contactsRouter.get('/:id',protect, isValidId, getOneContact)
 
-contactsRouter.delete('/:id', isValidId, deleteContact)
+contactsRouter.delete('/:id',protect, isValidId, deleteContact)
 
-contactsRouter.post('/', createContact)
+contactsRouter.post('/',protect, createContact)
 
-contactsRouter.put('/:id', isValidId, updateContact)
-contactsRouter.patch('/:id/favorite', isValidId, updateFavorite)
+contactsRouter.put('/:id',protect, isValidId, updateContact)
+
+contactsRouter.patch('/:id/favorite',protect, isValidId, updateFavorite)
 
 export default contactsRouter
