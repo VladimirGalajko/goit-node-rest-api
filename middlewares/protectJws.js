@@ -12,8 +12,9 @@ export const protect = catchAsync(async (req, res, next) => {
   if (!userId) throw new HttpError(401, 'Not authorized')
 
   const currentUser = await getUserById(userId)
+  console.log('curUser', currentUser)
 
-  if (!currentUser) throw new HttpError(401, 'Not authorized')
+  if (!currentUser || !currentUser.token) throw new HttpError(401, 'Not authorized')
 
   req.user = currentUser
 
