@@ -2,19 +2,21 @@
 import { Contact } from '../models/contactsModel.js'
 
 
-async function listContacts() {
-  const contacts = await Contact.find()
+async function listContacts(req) {
+  const { _id: owner } = req.user;
+  const contacts = await Contact.find({ owner })
   return contacts
 }
 
-async function getContactById(contactId) {
-  const contacts = await listContacts()
+async function getContactById(contactId, req) {
+
+  const contacts = await listContacts(req)
   const contact = contacts.find((el) => el.id === contactId) || null
   return contact || null
 }
 
-async function removeContact(contactId) {
-  const contact = await getContactById(contactId)
+async function removeContact(contactId,req) {
+  const contact = await getContactById(contactId,req)
   const result = await Contact.findByIdAndDelete(contactId)
 
   if (contact && result) {
@@ -22,13 +24,13 @@ async function removeContact(contactId) {
   } else return null
 }
 
-async function addContact(name, email, phone) {
-  const newContact = await Contact.create({ name, email, phone });
+async function addContact(name, email, phone,owner) {
+  const newContact = await Contact.create({ name, email, phone,owner });
   return newContact
 }
 
-async function updateOneContact(id, name, email, phone) {
-  const contact = await getContactById(id)
+async function updateOneContact(id, name, email, phone,req) {
+  const contact = await getContactById(id,req)
   if (!contact) return null
 
 
@@ -45,8 +47,9 @@ async function updateOneContact(id, name, email, phone) {
   return result
 }
 
-async function updateStatus(id, body) {
-  const contact = await getContactById(id)
+async function updateStatus(id, body,req) {
+  const contact = await getContactById(id,req)
+
   if (!contact) return null
 
   const result = await Contact.findByIdAndUpdate(id, body, {

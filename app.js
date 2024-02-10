@@ -41,6 +41,7 @@ mongoose
 app.use(morgan(logger))
 app.use(cors())
 app.use(express.json())
+app.use(express.static('public'))
 
 app.use('/api/contacts', contactsRouter)
 app.use('/api/users', authRouter)
@@ -72,4 +73,4 @@ app.listen(3000, () => {
   console.log('Server is running. Use our API on port: 3000')
 })
 
-console.log(  serverConfig)
+console.log(serverConfig)

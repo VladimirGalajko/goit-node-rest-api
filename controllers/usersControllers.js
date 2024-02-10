@@ -3,6 +3,7 @@ import { registerUser, loginUser } from '../services/userServices.js'
 import { User } from '../models/usersModel.js'
 import HttpError from '../helpers/HttpError.js'
 import bcrypt from 'bcrypt'
+import gravatar from 'gravatar';
 
 export const register = catchAsync(async (req, res) => {
   const { email, password } = req.body
@@ -11,9 +12,11 @@ export const register = catchAsync(async (req, res) => {
   if (user) {
     throw new HttpError(409, 'Email in use')
   }
-
+  const getUrl = gravatar.url(email);
+  const avatarURL = 'https:'+getUrl
   const hashPassword = await bcrypt.hash(password, 10)
-  const newUser = await registerUser({ ...req.body, password: hashPassword })
+  console.log("avatarURL:" ,avatarURL)
+  const newUser = await registerUser({ ...req.body, password: hashPassword,avatarURL })
 
   res.status(201).json({
     user: {
@@ -40,9 +43,10 @@ export const logout = async (req, res) => {
 }
 
 function current(req, res) {
+  // const { email, subscription } = req.user
   const { email, subscription } = req.user
-
-  res.status(200).json({ email, subscription })
+  // res.status(200).json({ email, subscription })
+  res.status(200).json(req.user)
 }
 
 export { current }

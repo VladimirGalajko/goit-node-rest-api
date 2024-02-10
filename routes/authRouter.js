@@ -9,5 +9,6 @@ usersRouter.post('/register', validateBodyReg(registerSchema), register)
 usersRouter.post('/login', validateBodyReg(loginSchema), login)
 usersRouter.post('/logout', protect, logout)
 usersRouter.get('/current', protect, current)
+// router.patch('/avatars',  protect, upload.single('avatar'), updateAvatar);
 
 export default usersRouter
