@@ -4,6 +4,11 @@ import { User } from '../models/usersModel.js'
 import HttpError from '../helpers/HttpError.js'
 import bcrypt from 'bcrypt'
 import gravatar from 'gravatar';
+import Jimp from 'jimp';
+const { PORT } = process.env;
+import path from "path";
+
+
 
 export const register = catchAsync(async (req, res) => {
   const { email, password } = req.body
@@ -15,7 +20,7 @@ export const register = catchAsync(async (req, res) => {
   const getUrl = gravatar.url(email);
   const avatarURL = 'https:'+getUrl
   const hashPassword = await bcrypt.hash(password, 10)
-  console.log("avatarURL:" ,avatarURL)
+
   const newUser = await registerUser({ ...req.body, password: hashPassword,avatarURL })
 
   res.status(201).json({
@@ -43,10 +48,22 @@ export const logout = async (req, res) => {
 }
 
 function current(req, res) {
-  // const { email, subscription } = req.user
   const { email, subscription } = req.user
-  // res.status(200).json({ email, subscription })
-  res.status(200).json(req.user)
+  res.status(200).json({ email, subscription })
 }
+
+
+export const updateAvatar = catchAsync(async (req, res) => {
+  const { path: oldPath, filename } = req.file;
+  const { _id } = req.user
+  Jimp.read(oldPath, (err, image) => {
+    if (err) throw err;
+    image.resize(250, 250).quality(60).write(`./public/avatars/${filename}`);
+  });
+
+  const avatarURL = path.join(`http://localhost:${PORT}/avatars`, filename);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+  res.json({ avatarURL});
+})
 
 export { current }
