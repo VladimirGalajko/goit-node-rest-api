@@ -11,3 +11,8 @@ export const loginSchema = Joi.object({
     email: Joi.string().required(),
 });
 
+const emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+export const emailSchema = Joi.object({
+  email: Joi.string().pattern(emailValid).required(),
+});
